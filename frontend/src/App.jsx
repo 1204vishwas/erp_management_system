@@ -14,6 +14,7 @@ import SalesOrders from "./pages/SalesOrders.jsx";
 import PurchaseOrders from "./pages/PurchaseOrders.jsx";
 import GRN from "./pages/GRN.jsx";
 import Invoices from "./pages/Invoices.jsx";
+import Reports from "./pages/Reports.jsx";
 import Users from "./pages/Users.jsx";
 import Profile from "./pages/Profile.jsx";
 import NotFound from "./pages/NotFound.jsx";
@@ -43,6 +44,7 @@ export default function App() {
         <Route path="/purchase-orders" element={<PurchaseOrders />} />
         <Route path="/grn" element={<GRN />} />
         <Route path="/invoice" element={<Invoices />} />
+        <Route path="/reports" element={<Reports />} />
         <Route path="/profile" element={<Profile />} />
 
         {/* Admin-only */}

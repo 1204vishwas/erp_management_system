@@ -86,7 +86,7 @@ export const updatePurchaseOrder = asyncHandler(async (req, res) => {
     throw new Error("Purchase order not found");
   }
 
-  const { supplier, products, status, notes } = req.body;
+  const { supplier, products, status, notes, paymentStatus, amountPaid } = req.body;
   if (supplier) order.supplier = supplier;
   if (status) order.status = status;
   if (notes !== undefined) order.notes = notes;
@@ -94,6 +94,22 @@ export const updatePurchaseOrder = asyncHandler(async (req, res) => {
     const { items, totalPrice } = await buildLineItems(products);
     order.products = items;
     order.totalPrice = totalPrice;
+  }
+
+  // Payment handling (money paid to supplier). Keep amountPaid & status in sync.
+  if (paymentStatus) {
+    order.paymentStatus = paymentStatus;
+    if (paymentStatus === "Paid") order.amountPaid = order.totalPrice;
+    if (paymentStatus === "Unpaid") order.amountPaid = 0;
+  }
+  if (amountPaid !== undefined) {
+    order.amountPaid = Math.min(Math.max(0, amountPaid), order.totalPrice);
+    order.paymentStatus =
+      order.amountPaid >= order.totalPrice
+        ? "Paid"
+        : order.amountPaid > 0
+        ? "Partial"
+        : "Unpaid";
   }
 
   const updated = await order.save();

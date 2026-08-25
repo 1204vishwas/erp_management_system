@@ -18,6 +18,7 @@ import purchaseOrderRoutes from "./routes/purchaseOrderRoutes.js";
 import grnRoutes from "./routes/grnRoutes.js";
 import invoiceRoutes from "./routes/invoiceRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -54,12 +55,13 @@ app.use("/api/purchase-orders", purchaseOrderRoutes);
 app.use("/api/grn", grnRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/reports", reportRoutes);
 
 // Error handling (must be last)
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Do not start the listener during tests (supertest manages the app).
 if (process.env.NODE_ENV !== "test") {

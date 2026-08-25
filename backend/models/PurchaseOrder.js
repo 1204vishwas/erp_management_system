@@ -20,6 +20,13 @@ const purchaseOrderSchema = new mongoose.Schema(
       enum: ["Pending", "Ordered", "Received", "Cancelled"],
       default: "Pending",
     },
+    // Payment tracking (money paid out to the supplier).
+    paymentStatus: {
+      type: String,
+      enum: ["Unpaid", "Partial", "Paid"],
+      default: "Unpaid",
+    },
+    amountPaid: { type: Number, min: 0, default: 0 },
     totalPrice: { type: Number, required: true, min: 0, default: 0 },
     notes: { type: String, default: "" },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

@@ -76,6 +76,12 @@ export const createInvoice = asyncHandler(async (req, res) => {
     createdBy: req.user._id,
   });
 
+  // Auto-advance the sales order: once invoiced, a Pending order is Confirmed.
+  if (order.status === "Pending") {
+    order.status = "Confirmed";
+    await order.save();
+  }
+
   const populated = await invoice.populate("customer salesOrder");
   res.status(201).json({ success: true, data: populated });
 });
@@ -92,6 +98,12 @@ export const updateInvoice = asyncHandler(async (req, res) => {
   if (status) invoice.status = status;
   if (dueDate) invoice.dueDate = dueDate;
   const updated = await invoice.save();
+
+  // When an invoice is marked Paid, auto-complete its sales order.
+  if (status === "Paid") {
+    await SalesOrder.findByIdAndUpdate(invoice.salesOrder, { status: "Completed" });
+  }
+
   res.json({ success: true, data: updated });
 });
 

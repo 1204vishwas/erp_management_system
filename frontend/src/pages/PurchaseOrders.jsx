@@ -12,6 +12,7 @@ export default function PurchaseOrders() {
       title="Purchase Orders"
       subtitle="Create and track supplier purchase orders"
       addLabel="New Purchase Order"
+      trackPayment
     />
   );
 }

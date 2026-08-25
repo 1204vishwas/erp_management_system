@@ -37,6 +37,7 @@ const options = {
       { name: "GRN", description: "Goods Receipt Notes" },
       { name: "Invoices", description: "Invoice generation" },
       { name: "Dashboard", description: "Metrics & charts data" },
+      { name: "Reports", description: "Consolidated report & balance sheet" },
     ],
   },
   apis: ["./routes/*.js"],

@@ -21,6 +21,7 @@ import MoveToInboxIcon from "@mui/icons-material/MoveToInbox";
 import DescriptionIcon from "@mui/icons-material/Description";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import BusinessIcon from "@mui/icons-material/Business";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 
 export const DRAWER_WIDTH = 240;
 
@@ -34,6 +35,7 @@ const navItems = [
   { label: "Purchase Orders", path: "/purchase-orders", icon: <LocalShippingIcon />, roles: ["all"] },
   { label: "GRN", path: "/grn", icon: <MoveToInboxIcon />, roles: ["all"] },
   { label: "Invoices", path: "/invoice", icon: <ReceiptLongIcon />, roles: ["all"] },
+  { label: "Reports / Balance Sheet", path: "/reports", icon: <AssessmentIcon />, roles: ["all"] },
   { label: "User Management", path: "/admin", icon: <AdminPanelSettingsIcon />, roles: ["Admin"] },
 ];
 

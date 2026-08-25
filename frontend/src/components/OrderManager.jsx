@@ -63,6 +63,7 @@ export default function OrderManager({
   title,
   subtitle,
   addLabel,
+  trackPayment = false,
 }) {
   const role = useSelector((s) => s.auth.user?.role);
   const canManage = role === "Admin" || role === manageRole;
@@ -175,6 +176,19 @@ export default function OrderManager({
     }
   };
 
+  // Update payment status (money paid to supplier) inline.
+  const handlePayment = async (id, paymentStatus) => {
+    try {
+      await api.put(`${endpoint}/${id}`, { paymentStatus });
+      toast.success(`Marked ${paymentStatus}`);
+      resource.refetch();
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const paymentColor = { Paid: "success", Partial: "warning", Unpaid: "error" };
+
   const columns = [
     { field: "orderNumber", label: "Order #" },
     {
@@ -199,6 +213,38 @@ export default function OrderManager({
       label: "Status",
       render: (r) => <Chip label={r.status} size="small" color={statusColor[r.status] || "default"} />,
     },
+    ...(trackPayment
+      ? [
+          {
+            field: "paymentStatus",
+            label: "Payment",
+            render: (r) =>
+              canManage ? (
+                <TextField
+                  select size="small" variant="standard"
+                  value={r.paymentStatus || "Unpaid"}
+                  onChange={(e) => handlePayment(r._id, e.target.value)}
+                  sx={{ minWidth: 100 }}
+                  SelectProps={{
+                    renderValue: (v) => (
+                      <Chip label={v} size="small" color={paymentColor[v] || "default"} />
+                    ),
+                  }}
+                >
+                  {["Unpaid", "Partial", "Paid"].map((s) => (
+                    <MenuItem key={s} value={s}>{s}</MenuItem>
+                  ))}
+                </TextField>
+              ) : (
+                <Chip
+                  label={r.paymentStatus || "Unpaid"}
+                  size="small"
+                  color={paymentColor[r.paymentStatus] || "default"}
+                />
+              ),
+          },
+        ]
+      : []),
     {
       field: "createdAt",
       label: "Date",
@@ -306,7 +352,7 @@ export default function OrderManager({
                       >
                         {products.map((p) => (
                           <MenuItem key={p._id} value={p._id}>
-                            {p.title} ({p.sku})
+                            {p.title} ({p.sku}) · Stock: {p.stock}
                           </MenuItem>
                         ))}
                       </TextField>
