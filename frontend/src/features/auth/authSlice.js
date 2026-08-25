@@ -3,15 +3,9 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "/api";
 
-// Rehydrate auth state from localStorage so sessions survive refreshes.
-const storedUser = JSON.parse(localStorage.getItem("erp_user") || "null");
-const storedToken = localStorage.getItem("erp_token") || null;
-
-const persist = (user, token) => {
-  localStorage.setItem("erp_user", JSON.stringify(user));
-  localStorage.setItem("erp_token", token);
-};
-
+// Note: persistence (saving/rehydrating user + token) is handled centrally by
+// the Redux store via app/persist.js — no manual localStorage here.
+//
 // We use a bare axios call here (not the interceptor instance) to avoid a
 // circular import between the store and the api module.
 export const login = createAsyncThunk(
@@ -19,7 +13,6 @@ export const login = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const { data } = await axios.post(`${API_URL}/login`, credentials);
-      persist(data.user, data.token);
       return data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Login failed");
@@ -32,7 +25,6 @@ export const register = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const { data } = await axios.post(`${API_URL}/register`, payload);
-      persist(data.user, data.token);
       return data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Registration failed");
@@ -43,8 +35,8 @@ export const register = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: storedUser,
-    token: storedToken,
+    user: null,
+    token: null,
     status: "idle",
     error: null,
   },
@@ -53,13 +45,11 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.status = "idle";
-      localStorage.removeItem("erp_user");
-      localStorage.removeItem("erp_token");
+      state.error = null;
     },
     // Keep the local user in sync after a profile update.
     setUser: (state, action) => {
       state.user = action.payload;
-      localStorage.setItem("erp_user", JSON.stringify(action.payload));
     },
   },
   extraReducers: (builder) => {

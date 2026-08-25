@@ -22,7 +22,7 @@ the skybrisk/
 └── frontend/                → React + Vite + Material-UI single-page app (all frontend files)
     └── src/
         ├── api/             → configured Axios instance (JWT + 401 auto-logout)
-        ├── app/             → Redux store
+        ├── app/             → Redux store + localStorage persistence (persist.js)
         ├── features/        → Redux slices (auth, ui)
         ├── components/      → Layout, Sidebar, Topbar, DataTable, guards, reusable managers
         ├── hooks/           → useResource (search + pagination fetch hook)
@@ -53,7 +53,9 @@ the skybrisk/
   `/sales-orders`, `/purchase-orders`, `/grn`, `/invoice`, `/admin`, `/profile` — all behind
   **token-based protected routes**, with an extra **role guard** on `/admin`.
 - **State management:** Redux Toolkit — auth state, user role, loading state; global toast
-  messages via react-toastify.
+  messages via react-toastify. The store is **persisted to localStorage** (via a Redux
+  subscription in `app/persist.js`), so the session and UI preferences survive a page refresh
+  and are rehydrated into the store on startup.
 - **Auth & authorization:** JWT login, role-based route protection, logout & automatic
   session-expiration handling (401 → auto logout).
 - **UI features:** toast alerts, search + filter + pagination on tables, Recharts dashboards,
@@ -81,6 +83,29 @@ the skybrisk/
   configured for). A MongoDB Atlas URI also works — just change `MONGO_URI` in `backend/.env`.
   On Windows, the MongoDB service typically starts automatically; check with
   `Get-Service MongoDB` in PowerShell.
+
+---
+
+## Environment variables
+
+**Backend** (`backend/.env`, copy from `backend/.env.example`):
+
+| Variable         | Example                                     | Description                          |
+|------------------|---------------------------------------------|--------------------------------------|
+| `PORT`           | `3000`                                       | Port the Express API listens on      |
+| `NODE_ENV`       | `development`                                | `development` / `production` / `test`|
+| `MONGO_URI`      | `mongodb://127.0.0.1:27017/erp_management`   | MongoDB connection string            |
+| `JWT_SECRET`     | `a_long_random_secret`                       | Secret used to sign JWTs             |
+| `JWT_EXPIRES_IN` | `7d`                                         | Token lifetime                       |
+| `CLIENT_URL`     | `http://localhost:5173`                      | Allowed CORS origin (the frontend)   |
+
+**Frontend** (`frontend/.env`, copy from `frontend/.env.example`):
+
+| Variable        | Example  | Description                                                          |
+|-----------------|----------|---------------------------------------------------------------------|
+| `VITE_API_URL`  | `/api`   | API base URL. In dev, Vite proxies `/api` → `http://localhost:3000` |
+
+> **Ports:** backend API runs on **3000**, frontend dev server on **5173**.
 
 ---
 
@@ -201,7 +226,7 @@ cd frontend && npm test     # Vitest + React Testing Library
 
 | Category        | Technology                                                 |
 |-----------------|------------------------------------------------------------|
-| Frontend        | React, React Router v6, Redux Toolkit, Axios, Material-UI  |
+| Frontend        | React, React Router v6, Redux Toolkit (persisted store), Axios, Material-UI |
 | Backend         | Node.js, Express.js                                        |
 | Database        | MongoDB + Mongoose                                         |
 | Authentication  | JWT + bcrypt                                               |
