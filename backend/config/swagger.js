@@ -14,7 +14,7 @@ const options = {
         "REST API for the ERP Management System (MERN Stack). Modules: Users, Products, Customers, Suppliers, Sales Orders, Purchase Orders, GRN, Invoices.",
     },
     servers: [
-      { url: "http://localhost:5000", description: "Local development server" },
+      { url: "http://localhost:3000", description: "Local development server" },
     ],
     components: {
       securitySchemes: {

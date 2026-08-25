@@ -91,11 +91,11 @@ cd backend
 npm install
 cp .env.example .env        # then edit values (MONGO_URI, JWT_SECRET)
 npm run seed                # optional: creates demo users + sample data
-npm run dev                 # starts API on http://localhost:5000
+npm run dev                 # starts API on http://localhost:3000
 ```
 
-- API docs (Swagger): http://localhost:5000/api-docs
-- Health check: http://localhost:5000/
+- API docs (Swagger): http://localhost:3000/api-docs
+- Health check: http://localhost:3000/
 
 **Seeded demo logins** (after `npm run seed`):
 
@@ -111,7 +111,7 @@ npm run dev                 # starts API on http://localhost:5000
 ```bash
 cd frontend
 npm install
-cp .env.example .env        # VITE_API_URL defaults to /api (proxied to :5000 in dev)
+cp .env.example .env        # VITE_API_URL defaults to /api (proxied to :3000 in dev)
 npm run dev                 # starts app on http://localhost:5173
 ```
 
